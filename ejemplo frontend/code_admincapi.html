@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Administración de Capítulos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#006400",
+            "danger": "#B22222",
+            "background-light": "#f6f8f6",
+            "background-dark": "#121212",
+            "card-dark": "#1E1E1E",
+            "text-dark-primary": "#FFFFFF",
+            "text-dark-secondary": "#A0A0A0",
+            "primary-accent-dark": "#103C10",
+          },
+          fontFamily: {
+            "display": ["Be Vietnam Pro", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display text-text-dark-primary">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="flex items-center bg-card-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-700">
+<div class="flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined text-gray-200">arrow_back</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center text-white">Capítulos y Miembros</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="text-primary-accent-dark text-base font-bold leading-normal tracking-[0.015em] shrink-0 text-green-400">Añadir</button>
+</div>
+</div>
+<div class="flex-grow p-4 space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-card-dark rounded-lg shadow p-4 flex flex-col items-center justify-center">
+<p class="text-2xl font-bold text-green-400">4</p>
+<p class="text-sm font-medium text-text-dark-secondary">Capítulos</p>
+</div>
+<div class="bg-card-dark rounded-lg shadow p-4 flex flex-col items-center justify-center">
+<p class="text-2xl font-bold text-green-400">45</p>
+<p class="text-sm font-medium text-text-dark-secondary">Miembros Totales</p>
+</div>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+<input class="w-full rounded-lg border-gray-600 bg-card-dark pl-10 pr-4 py-2 focus:border-green-400 focus:ring-green-400 shadow-sm text-white placeholder-gray-400" placeholder="Buscar capítulo o miembro..." type="text"/>
+</div>
+<div class="flex flex-col bg-card-dark rounded-lg shadow">
+<div class="flex items-center gap-4 px-4 py-3">
+<div class="text-white flex items-center justify-center rounded-full bg-primary-accent-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-green-400">groups</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<p class="text-base font-bold leading-normal">Capítulo Central</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold bg-green-900 text-green-200 px-2 py-0.5 rounded-full">Regional Centro</span>
+<p class="text-sm font-normal text-text-dark-secondary">15 Miembros</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="shrink-0 text-gray-400 hover:text-green-400">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="shrink-0 text-gray-400 hover:text-danger">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col bg-card-dark rounded-lg shadow">
+<div class="flex items-center gap-4 px-4 py-3">
+<div class="text-white flex items-center justify-center rounded-full bg-primary-accent-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-green-400">groups</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<p class="text-base font-bold leading-normal">Capítulo Norte</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold bg-green-900 text-green-200 px-2 py-0.5 rounded-full">Regional Norte</span>
+<p class="text-sm font-normal text-text-dark-secondary">10 Miembros</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="shrink-0 text-gray-400 hover:text-green-400">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="shrink-0 text-gray-400 hover:text-danger">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col bg-card-dark rounded-lg shadow">
+<div class="flex items-center gap-4 px-4 py-3">
+<div class="text-white flex items-center justify-center rounded-full bg-primary-accent-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-green-400">groups</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<p class="text-base font-bold leading-normal">Capítulo Sur</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold bg-green-900 text-green-200 px-2 py-0.5 rounded-full">Regional Sur</span>
+<p class="text-sm font-normal text-text-dark-secondary">12 Miembros</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="shrink-0 text-gray-400 hover:text-green-400">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="shrink-0 text-gray-400 hover:text-danger">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col bg-card-dark rounded-lg shadow">
+<div class="flex items-center gap-4 px-4 py-3">
+<div class="text-white flex items-center justify-center rounded-full bg-primary-accent-dark shrink-0 size-12">
+<span class="material-symbols-outlined text-green-400">groups</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<p class="text-base font-bold leading-normal">Capítulo Este</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold bg-green-900 text-green-200 px-2 py-0.5 rounded-full">Regional Este</span>
+<p class="text-sm font-normal text-text-dark-secondary">8 Miembros</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="shrink-0 text-gray-400 hover:text-green-400">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="shrink-0 text-gray-400 hover:text-danger">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20 hidden">
+<div class="bg-card-dark rounded-xl shadow-lg p-6 w-11/12 max-w-sm">
+<h3 class="text-lg font-bold mb-4 text-center text-white">Añadir Capítulo</h3>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-300" for="chapter-name">Nombre del Capítulo</label>
+<input class="mt-1 block w-full rounded-md border-gray-600 shadow-sm focus:border-green-400 focus:ring-green-400 sm:text-sm bg-gray-700 placeholder-gray-400 text-white" id="chapter-name" name="chapter-name" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-300" for="regional">Regional</label>
+<select class="mt-1 block w-full rounded-md border-gray-600 shadow-sm focus:border-green-400 focus:ring-green-400 sm:text-sm bg-gray-700 placeholder-gray-400 text-white" id="regional" name="regional">
+<option>Seleccionar Regional</option>
+<option>Regional Centro</option>
+<option>Regional Norte</option>
+<option>Regional Sur</option>
+<option>Regional Este</option>
+</select>
+</div>
+</div>
+<div class="mt-6 flex justify-end gap-3">
+<button class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-600 rounded-md hover:bg-gray-500">Cancelar</button>
+<button class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">Guardar</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

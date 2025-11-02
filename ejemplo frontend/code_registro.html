@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nuevo Registro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#006847",
+            "background-light": "#f6f8f6",
+            "background-dark": "#121212",
+            "accent": "#CE1126",
+            "surface-dark": "#1E1E1E"
+          },
+          fontFamily: {
+            "display": ["Be Vietnam Pro", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="flex items-center bg-surface-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<div class="text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Registrar Nuevo Movimiento</h2>
+<div class="flex w-12 items-center justify-end">
+<p class="text-primary/90 text-base font-bold leading-normal tracking-[0.015em] shrink-0">Cancelar</p>
+</div>
+</div>
+<div class="flex flex-col flex-1 p-4 gap-4">
+<div class="flex px-4 py-3">
+<div class="flex h-10 flex-1 items-center justify-center rounded-lg bg-[#2D2D2D] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary text-white text-sm font-medium leading-normal has-[:checked]:shadow-md transition-all duration-200">
+<span class="truncate">Apoyo</span>
+<input checked="" class="invisible w-0" name="movement_type" type="radio" value="Apoyo"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-accent text-white text-sm font-medium leading-normal has-[:checked]:shadow-md transition-all duration-200">
+<span class="truncate">Multa</span>
+<input class="invisible w-0" name="movement_type" type="radio" value="Multa"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Miembro</p>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-700 bg-surface-dark h-14 placeholder:text-gray-400 p-3 text-base font-normal leading-normal appearance-none bg-no-repeat bg-right" style="background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27%23ffffff%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M128,188a12,12,0,0,1-8.49-3.51l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17l-80,80A12,12,0,0,1,128,188Z%27%3e%3c/path%3e%3c/svg%3e'); background-position: right 0.75rem center;">
+<option value="">Seleccionar miembro</option>
+<option value="member1">Juan Pérez</option>
+<option value="member2">Ana García</option>
+<option value="member3">Luis Hernández</option>
+</select>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Monto</p>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">$</span>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-700 bg-surface-dark h-14 placeholder:text-gray-400 pl-8 pr-3 py-3 text-base font-normal leading-normal" placeholder="0.00" type="number"/>
+</div>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Fecha límite de pago</p>
+<div class="flex w-full flex-1 items-stretch rounded-lg">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-700 bg-surface-dark h-14 placeholder:text-gray-400 p-3 pr-2 border-r-0 text-base font-normal leading-normal" placeholder="Seleccionar fecha" type="date"/>
+<div class="text-primary/90 flex border border-gray-700 bg-surface-dark items-center justify-center px-3 rounded-r-lg border-l-0">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+</div>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Tipo de Apoyo</p>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-700 bg-surface-dark h-14 placeholder:text-gray-400 p-3 text-base font-normal leading-normal appearance-none bg-no-repeat bg-right" style="background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27%23ffffff%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M128,188a12,12,0,0,1-8.49-3.51l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17l-80,80A12,12,0,0,1,128,188Z%27%3e%3c/path%3e%3c/svg%3e'); background-position: right 0.75rem center;">
+<option value="">Seleccionar categoría</option>
+<option value="accidente">Accidente</option>
+<option value="tramite">Trámite</option>
+<option value="aniversario">Aniversario</option>
+<option value="otro">Otro</option>
+</select>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Descripción</p>
+<textarea class="form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-700 bg-surface-dark h-28 placeholder:text-gray-400 p-3 text-base font-normal leading-normal" placeholder="Ej. Apoyo por accidente en ruta..."></textarea>
+</label>
+<div class="flex flex-col w-full gap-2">
+<p class="text-white text-base font-medium leading-normal">Comprobante</p>
+<div class="flex items-center justify-center w-full">
+<label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-surface-dark hover:bg-gray-800 transition-colors duration-200" for="dropzone-file">
+<div class="flex flex-col items-center justify-center pt-5 pb-6">
+<span class="material-symbols-outlined text-gray-400">cloud_upload</span>
+<p class="mb-2 text-sm text-gray-400"><span class="font-semibold text-primary/90">Click para subir</span> o arrastra y suelta</p>
+<p class="text-xs text-gray-500">PNG, JPG, PDF (MAX. 5MB)</p>
+</div>
+<input class="hidden" id="dropzone-file" type="file"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="sticky bottom-0 bg-surface-dark p-4 w-full">
+<button class="w-full bg-primary text-white font-bold py-4 px-4 rounded-lg text-lg shadow-lg hover:bg-primary/90 transition-colors duration-200 flex items-center justify-center gap-2">
+<span>Guardar Registro</span>
+</button>
+</div>
+</div>
+</body></html>

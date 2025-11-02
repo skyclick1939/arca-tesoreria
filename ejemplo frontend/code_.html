@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inicio de Sesión - Moto Club</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1E392A",
+                        "secondary": "#B22222",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#111811",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col dark group/design-root overflow-x-hidden">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="A stylish Harley Davidson Fat Boy motorcycle." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEurMpwtguqFqyZeWAn1xpLJNVoIbs9SGHdBSj9k01b5VXEaLNud2vx5JrYDs_GohBEPQx7q33A1cx5hijaSSpxd6qHsCimqqn5iWhdhNrQNz8I3-7tXdkNWcUURyJy_4ZpPkV4JE5qhEa3PS3JT0hZjNWAP67SvPB9bRoXoiVs2Rq_skWJ6XAZlVpi-6CylcARRVL8392iVV4jSz1eCZrO1U0OAoQndD6soRpdb0IVHcnIiLZsD_ANQSF381ySz_R8t7OzmSnmo0u");'>
+<div class="w-full h-full bg-black/60 backdrop-blur-sm"></div>
+</div>
+</div>
+<div class="relative z-10 flex flex-col justify-center items-center flex-1 px-4 py-8">
+<div class="flex flex-col items-center w-full max-w-md">
+<img alt="Logo del Moto Club" class="w-24 h-24 mb-8" data-alt="Moto club logo placeholder." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMG7JLDVbwprZpl2rg59ED5QEY8EXc9N_4i9B6iXdThKZHvlzSnjmqlhKWT3mhFsP8LHfP8u1wwG-XTNPE32DqJketOzLYeRrKqhNLYBQm8b2OJtzGDB2YNfIsXCP765sO_Vhg4yME1pmxDBQSo60_tk7o0Gg4tMwhbH1jNasrK5Rf-KWuwDKZ1nxCaNgcYSYJuhxqiuZ-CrPApJp3tAjc24S8mrtzR--Za5J-h4kYrBHzNJqLIk7u9s3IaopIts48o4ibBJapoPze"/>
+<div class="w-full space-y-6">
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Usuario</p>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-[#9db89d]">person</span>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-[#293829] focus:border-none h-14 placeholder:text-[#9db89d] pl-12 pr-4 text-base font-normal leading-normal" placeholder="Ingresa tu usuario" value=""/>
+</div>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-white text-base font-medium leading-normal pb-2">Contraseña</p>
+<div class="relative flex w-full flex-1 items-center rounded-lg bg-[#293829]">
+<span class="material-symbols-outlined absolute left-4 text-[#9db89d]">lock</span>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-transparent h-14 placeholder:text-[#9db89d] pl-12 pr-12 text-base font-normal leading-normal" placeholder="Ingresa tu contraseña" type="password" value=""/>
+<button class="text-[#9db89d] absolute right-0 flex items-center justify-center h-14 w-14" data-icon="Eye" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</label>
+<button class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 focus:ring-2 focus:ring-primary/50 focus:outline-none transition-colors">
+<span class="truncate">INICIAR SESIÓN</span>
+</button>
+</div>
+<p class="text-secondary text-sm font-normal leading-normal pt-8 pb-3 px-4 text-center">
+                    ¿Problemas para iniciar sesión? <a class="underline hover:text-red-400" href="https://wa.me/3957881559" target="_blank">Contacta a soporte</a>
+</p>
+<p class="text-[#9db89d] text-sm font-normal leading-normal px-4 text-center">WhatsApp: 3957881559</p>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Moto Club Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4CAF50",
+            "secondary": "#F44336",
+            "background-light": "#f6f8f6",
+            "background-dark": "#121212",
+            "card-dark": "#1E1E1E",
+            "text-dark-primary": "#FFFFFF",
+            "text-dark-secondary": "#BDBDBD",
+          },
+          fontFamily: {
+            "display": ["Be Vietnam Pro", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden" style='font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;'>
+<div class="flex items-center p-4 pb-2 justify-between bg-background-dark">
+<div class="flex items-center gap-2">
+<img alt="Logo del motoclub" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9xs7j78UtPkiSUuhzVWc5Y7nQTH-Zd-qseHlwBmLIYJQjEgO6i21SActHCezD4rsFLUDxqMj-NmTXj-xk_5ca6f9D_hAEpKS5V6mHztb2QyeTGMsZe8mpuzJY6_2ne2bANqQcxKpKdf1bUHQFrwRa-IpEp8uP3gSwMB5VzR4bLWfccp4XDoQ7oNAwqDicd15i3zvBU_jebpja-YCld3AIwV-ntH5HWxglelytm8AqM0mBBZx_ARxt-Du_nHiu1glXAaRGTSAM-mUp"/>
+<h2 class="text-xl font-bold leading-tight tracking-[-0.015em] text-text-dark-primary">Dashboard</h2>
+</div>
+<span class="material-symbols-outlined text-text-dark-primary">notifications</span>
+</div>
+<div class="flex flex-wrap gap-4 p-4">
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-card-dark">
+<p class="text-base font-medium leading-normal text-text-dark-secondary">Total de Apoyos</p>
+<p class="tracking-light text-2xl font-bold leading-tight text-text-dark-primary">$12,500</p>
+<p class="text-base font-medium leading-normal text-primary">+15%</p>
+</div>
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-card-dark">
+<p class="text-base font-medium leading-normal text-text-dark-secondary">Total de Multas</p>
+<p class="tracking-light text-2xl font-bold leading-tight text-text-dark-primary">$3,200</p>
+<p class="text-base font-medium leading-normal text-secondary">-5%</p>
+</div>
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-card-dark">
+<p class="text-base font-medium leading-normal text-text-dark-secondary">Saldo General</p>
+<p class="tracking-light text-2xl font-bold leading-tight text-primary">$9,300</p>
+<p class="text-base font-medium leading-normal text-primary">+12%</p>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row flex-wrap gap-4 px-4 py-2">
+<div class="flex min-w-72 flex-1 flex-col gap-2 rounded-xl border border-[#BDBDBD]/10 p-6 bg-card-dark">
+<p class="text-base font-medium leading-normal text-text-dark-primary">Cumplimiento por Capítulo</p>
+<p class="tracking-light text-[32px] font-bold leading-tight truncate text-text-dark-primary">85%</p>
+<div class="flex gap-1">
+<p class="text-base font-normal leading-normal text-text-dark-secondary">Promedio</p>
+<p class="text-base font-medium leading-normal text-primary">+5%</p>
+</div>
+<div class="grid min-h-[180px] grid-flow-col gap-6 grid-rows-[1fr_auto] items-end justify-items-center px-3 pt-4">
+<div class="bg-primary/30 w-full rounded-t-md" style="height: 60%;"></div>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Centro</p>
+<div class="bg-primary/30 w-full rounded-t-md" style="height: 85%;"></div>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Norte</p>
+<div class="bg-secondary/30 w-full rounded-t-md" style="height: 40%;"></div>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Sur</p>
+<div class="bg-primary/30 w-full rounded-t-md" style="height: 95%;"></div>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Este</p>
+</div>
+</div>
+<div class="flex min-w-72 flex-1 flex-col gap-2 rounded-xl border border-[#BDBDBD]/10 p-6 bg-card-dark">
+<p class="text-base font-medium leading-normal text-text-dark-primary">Estado de Resultados (Últimos 6 meses)</p>
+<p class="tracking-light text-[32px] font-bold leading-tight truncate text-text-dark-primary">$2,100</p>
+<div class="flex gap-1">
+<p class="text-base font-normal leading-normal text-text-dark-secondary">vs periodo anterior</p>
+<p class="text-base font-medium leading-normal text-primary">+8%</p>
+</div>
+<div class="flex min-h-[180px] flex-1 flex-col gap-8 py-4">
+<svg fill="none" height="150" preserveAspectRatio="none" viewBox="0 0 472 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V150H0V109Z" fill="url(#paint0_linear_income_dark)"></path>
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#4CAF50" stroke-linecap="round" stroke-width="3"></path>
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_income_dark" x1="236" x2="236" y1="1" y2="149">
+<stop stop-color="#4CAF50" stop-opacity="0.4"></stop>
+<stop offset="1" stop-color="#4CAF50" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+</svg>
+<div class="flex justify-around">
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Ene</p>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Feb</p>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Mar</p>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Abr</p>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">May</p>
+<p class="text-[13px] font-bold leading-normal tracking-[0.015em] text-text-dark-secondary">Jun</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 pt-4 pb-20">
+<div class="flex justify-between items-center pb-4">
+<h3 class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-dark-primary">Últimas Transacciones</h3>
+<div class="relative">
+<select class="appearance-none bg-card-dark border border-[#BDBDBD]/10 text-text-dark-primary text-sm font-medium rounded-lg pl-4 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+<option>Todo</option>
+<option>Pagado</option>
+<option>Pendiente</option>
+<option>Atrasado</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-text-dark-primary pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-4 rounded-xl p-4 bg-card-dark">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary">add</span>
+</div>
+<div class="flex-1">
+<p class="font-medium text-text-dark-primary">Juan Pérez - Apoyo</p>
+<p class="text-sm text-green-400">Pagado</p>
+</div>
+<p class="font-bold text-primary">+$50.00</p>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-card-dark">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
+<span class="material-symbols-outlined text-secondary">remove</span>
+</div>
+<div class="flex-1">
+<p class="font-medium text-text-dark-primary">Carlos Gómez - Multa</p>
+<p class="text-sm text-red-400">Atrasado</p>
+</div>
+<p class="font-bold text-secondary">-$20.00</p>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-card-dark">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary">add</span>
+</div>
+<div class="flex-1">
+<p class="font-medium text-text-dark-primary">Ana Torres - Apoyo</p>
+<p class="text-sm text-green-400">Pagado</p>
+</div>
+<p class="font-bold text-primary">+$50.00</p>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-card-dark">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
+<span class="material-symbols-outlined text-secondary">remove</span>
+</div>
+<div class="flex-1">
+<p class="font-medium text-text-dark-primary">Luis Fernández - Multa</p>
+<p class="text-sm text-yellow-400">Pendiente</p>
+</div>
+<p class="font-bold text-secondary">-$15.00</p>
+</div>
+</div>
+</div>
+<div class="fixed bottom-4 right-4 flex flex-col gap-4">
+<button class="flex items-center justify-center gap-2 h-14 w-auto px-4 rounded-full bg-secondary text-white shadow-lg shadow-black/50">
+<span class="material-symbols-outlined">add</span>
+<span class="font-medium">Registrar Multa</span>
+</button>
+<button class="flex items-center justify-center gap-2 h-14 w-auto px-4 rounded-full bg-primary text-white shadow-lg shadow-black/50">
+<span class="material-symbols-outlined">add</span>
+<span class="font-medium">Registrar Apoyo</span>
+</button>
+</div>
+</div>
+</body></html>
