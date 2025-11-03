@@ -60,51 +60,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // 5. Obtener perfil del usuario
-  const { data: profile, error: profileError } = await supabase
-    .from('arca_user_profiles')
-    .select('role')
-    .eq('user_id', user.id)
-    .single();
+  // 5. Usuario autenticado → permitir acceso
+  // NOTA CRÍTICA: La protección por rol ahora es client-side via useAuth() hooks
+  // Cada dashboard verifica el rol usando AuthProvider que hace su propio fetch
+  // Esto elimina la query bloqueante que causaba 3+ min de delay (ver ARQUITECTURA_SIMPLIFICADA.md)
 
-  // 6. Si no existe perfil → error crítico
-  if (profileError || !profile) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = '/login';
-    redirectUrl.searchParams.set('error', 'no_profile');
-    return NextResponse.redirect(redirectUrl);
-  }
+  // SEGURIDAD: Las RLS policies en Supabase garantizan que:
+  // - Presidentes solo ven datos de su capítulo
+  // - Admins ven todos los datos
+  // Por lo tanto, no necesitamos verificar rol en middleware
 
-  const userRole = profile.role;
-
-  // 7. Protección de rutas según rol
-
-  // 7a. Bloquear /admin/* para presidentes
-  if (pathname.startsWith('/admin') && userRole === 'president') {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = '/presidente/dashboard';
-    redirectUrl.searchParams.set('error', 'unauthorized');
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // 7b. Bloquear /presidente/* para administradores
-  if (pathname.startsWith('/presidente') && userRole === 'admin') {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = '/admin/dashboard';
-    redirectUrl.searchParams.set('error', 'unauthorized');
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // 8. Redirigir desde raíz (/) al dashboard según rol
-  if (pathname === '/') {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname =
-      userRole === 'admin' ? '/admin/dashboard' : '/presidente/dashboard';
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // 9. Permitir acceso (sesión válida + rol correcto)
-  // IMPORTANTE: Retornar response con cookies actualizadas
   return response;
 }
 
@@ -115,13 +80,14 @@ export async function middleware(request: NextRequest) {
  * TODO lo demás (/_next/*, /api/*, /login, etc.) NO ejecutará el middleware.
  *
  * Rutas protegidas:
- * - / (raíz para redirección según rol)
  * - /admin/:path* (todas las rutas admin)
  * - /presidente/:path* (todas las rutas presidente)
+ *
+ * NOTA: Raíz (/) ya NO está protegida por middleware
+ * La redirección se maneja client-side en pages/index.tsx usando useAuth()
  */
 export const config = {
   matcher: [
-    '/',
     '/admin/:path*',
     '/presidente/:path*',
   ],

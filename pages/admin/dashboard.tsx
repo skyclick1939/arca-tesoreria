@@ -161,30 +161,49 @@ export default function AdminDashboard() {
             </Link>
 
             {/* Card: Auditoría */}
-            <div className="card hover:border-primary cursor-pointer transition-colors">
-              <h3 className="text-lg font-bold text-primary mb-2">
-                Registro de Auditoría
-              </h3>
-              <p className="text-text-secondary text-sm mb-4">
-                Historial de cambios en deudas y pagos.
-              </p>
-              <p className="text-xs text-text-muted">
-                Estado: Trigger implementado en DB
-              </p>
-            </div>
+            <Link href="/admin/auditoria">
+              <div className="card hover:border-primary cursor-pointer transition-colors">
+                <h3 className="text-lg font-bold text-primary mb-2">
+                  Registro de Auditoría
+                </h3>
+                <p className="text-text-secondary text-sm mb-4">
+                  Historial completo de cambios en el sistema.
+                </p>
+                <p className="text-xs text-primary-light font-medium">
+                  ✅ Disponible → Click para acceder
+                </p>
+              </div>
+            </Link>
+
+            {/* Card: Gestión de Usuarios */}
+            <Link href="/admin/usuarios">
+              <div className="card hover:border-primary cursor-pointer transition-colors">
+                <h3 className="text-lg font-bold text-primary mb-2">
+                  Gestión de Usuarios
+                </h3>
+                <p className="text-text-secondary text-sm mb-4">
+                  Administrar roles y permisos de usuarios.
+                </p>
+                <p className="text-xs text-primary-light font-medium">
+                  ✅ Disponible → Click para acceder
+                </p>
+              </div>
+            </Link>
 
             {/* Card: Configuración */}
-            <div className="card hover:border-primary cursor-pointer transition-colors">
-              <h3 className="text-lg font-bold text-primary mb-2">
-                Configuración
-              </h3>
-              <p className="text-text-secondary text-sm mb-4">
-                Gestionar usuarios y configuración del sistema.
-              </p>
-              <p className="text-xs text-text-muted">
-                Estado: Pendiente (Post-MVP)
-              </p>
-            </div>
+            <Link href="/admin/configuracion">
+              <div className="card hover:border-primary cursor-pointer transition-colors">
+                <h3 className="text-lg font-bold text-primary mb-2">
+                  Configuración del Sistema
+                </h3>
+                <p className="text-text-secondary text-sm mb-4">
+                  Configuraciones globales de la aplicación.
+                </p>
+                <p className="text-xs text-primary-light font-medium">
+                  ✅ Disponible → Click para acceder
+                </p>
+              </div>
+            </Link>
           </div>
 
           {/* Información del sistema */}

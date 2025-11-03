@@ -238,17 +238,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Redirige al usuario según su rol
    *
-   * Usa window.location.assign('/') para forzar FULL PAGE RELOAD.
-   * Esto garantiza que las cookies se envíen al middleware.
-   * El middleware se encargará de redirigir al dashboard correcto según el rol.
+   * FIX: Reemplazado window.location.assign() por router.push()
+   * Esto elimina el "hard reload" que causaba 3+ min de delay.
+   * Ahora redirige directamente al dashboard correcto usando client-side navigation.
    *
    * @param role - Rol del usuario (admin | president)
    */
   const redirectByRole = (role: UserRole) => {
-    console.log('[AuthProvider] Redirigiendo con FULL PAGE RELOAD...');
-    // Forzar recarga completa a la raíz
-    // El middleware redirigirá al dashboard correcto
-    window.location.assign('/');
+    console.log('[AuthProvider] Redirigiendo con client-side navigation...');
+
+    // Redirigir directamente al dashboard correcto según rol
+    // Ya NO pasamos por raíz (/) - navegación directa
+    const targetPath = role === 'admin' ? '/admin/dashboard' : '/presidente/dashboard';
+    router.push(targetPath);
   };
 
   // Valor del contexto que se expone a los consumidores
