@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyChapter } from '@/hooks/useChapters';
 import { useDebts } from '@/hooks/useDebts';
 import { useMarkOverdueDebts } from '@/hooks/useMarkOverdueDebts';
 import type { Debt, DebtStatus } from '@/types/database.types';
 import UploadProofModal from '@/components/modals/UploadProofModal';
+import ViewProofModal from '@/components/modals/ViewProofModal';
+import { validatePasswordStrength, type PasswordStrengthCheck } from '@/lib/validation/password';
 
 /**
  * Dashboard de Presidente - El Arca
@@ -25,12 +28,31 @@ import UploadProofModal from '@/components/modals/UploadProofModal';
 type FilterStatus = DebtStatus | 'all';
 
 export default function PresidentDashboard() {
-  const { profile, isAuthenticated, isPresident, isLoading, logout } = useAuth();
+  const { profile, session, isAuthenticated, isPresident, isLoading, logout } = useAuth();
   const { data: myChapter, isLoading: loadingChapter } = useMyChapter();
 
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null);
+
+  // Estado para modal de visualización de comprobante
+  const [viewProofModalOpen, setViewProofModalOpen] = useState(false);
+  const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
+
+  // Estado para modal de perfil
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    fullName: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [passwordChecks, setPasswordChecks] = useState<PasswordStrengthCheck>({
+    minLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasSpecial: false,
+  });
 
   // Marcar deudas vencidas al cargar dashboard (ejecuta 1 vez por sesión)
   useMarkOverdueDebts();
@@ -39,6 +61,82 @@ export default function PresidentDashboard() {
   const { data: debts = [], isLoading: loadingDebts } = useDebts({
     chapter_id: myChapter?.id,
     status: filterStatus === 'all' ? undefined : filterStatus,
+  });
+
+  // Forzar cambio de contraseña en primer login
+  useEffect(() => {
+    // @ts-ignore - must_change_password existe pero TypeScript no lo conoce aún
+    if (profile?.must_change_password === true && !profileModalOpen) {
+      setProfileModalOpen(true);
+    }
+  }, [profile, profileModalOpen]);
+
+  // Pre-llenar nombre del usuario al abrir modal
+  useEffect(() => {
+    if (profileModalOpen && profile?.full_name) {
+      setProfileForm((prev) => ({
+        ...prev,
+        fullName: profile.full_name,
+      }));
+    }
+  }, [profileModalOpen, profile?.full_name]);
+
+  // Validación en tiempo real de contraseña
+  useEffect(() => {
+    if (profileForm.newPassword) {
+      const validation = validatePasswordStrength(profileForm.newPassword);
+      setPasswordChecks(validation.checks);
+    } else {
+      setPasswordChecks({
+        minLength: false,
+        hasUppercase: false,
+        hasLowercase: false,
+        hasSpecial: false,
+      });
+    }
+  }, [profileForm.newPassword]);
+
+  // Mutation para cambiar contraseña y perfil
+  const changeProfileMutation = useMutation({
+    mutationFn: async () => {
+      const token = session?.access_token;
+      if (!token) throw new Error('No hay sesión activa');
+
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          currentPassword: profileForm.currentPassword,
+          newPassword: profileForm.newPassword || undefined,
+          fullName: profileForm.fullName,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Error al actualizar perfil');
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      alert('✅ Perfil actualizado exitosamente');
+      setProfileModalOpen(false);
+      setProfileForm({
+        fullName: '',
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      // Recargar para actualizar nombre en header
+      window.location.reload();
+    },
+    onError: (error: Error) => {
+      alert(`❌ Error: ${error.message}`);
+    },
   });
 
   // Mostrar loading mientras verifica autenticación
@@ -66,6 +164,76 @@ export default function PresidentDashboard() {
       </div>
     );
   }
+
+  // Handler: Abrir modal de perfil
+  const handleOpenProfileModal = () => {
+    setProfileModalOpen(true);
+  };
+
+  // Handler: Cerrar modal de perfil
+  const handleCloseProfileModal = () => {
+    // @ts-ignore - must_change_password existe pero TypeScript no lo conoce aún
+    const mustChangePassword = profile?.must_change_password === true;
+
+    // No permitir cerrar si es cambio forzoso
+    if (mustChangePassword) {
+      alert('⚠️ Debes cambiar tu contraseña antes de continuar por motivos de seguridad');
+      return;
+    }
+
+    setProfileModalOpen(false);
+    setProfileForm({
+      fullName: '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+  };
+
+  // Handler: Cambiar perfil
+  const handleSubmitProfile = async () => {
+    // @ts-ignore - must_change_password existe pero TypeScript no lo conoce aún
+    const mustChangePassword = profile?.must_change_password === true;
+
+    // Validar campos
+    if (!profileForm.fullName || profileForm.fullName.trim().length === 0) {
+      alert('❌ El nombre es requerido');
+      return;
+    }
+
+    // Si es cambio FORZOSO, validar que ingrese contraseña nueva
+    if (mustChangePassword && !profileForm.newPassword) {
+      alert('❌ Debes cambiar tu contraseña por motivos de seguridad');
+      return;
+    }
+
+    // Si está cambiando contraseña, validar
+    if (profileForm.newPassword) {
+      if (!profileForm.currentPassword) {
+        alert('❌ Debes ingresar tu contraseña actual para cambiarla');
+        return;
+      }
+
+      const validation = validatePasswordStrength(profileForm.newPassword);
+      if (!validation.valid) {
+        alert(`❌ La nueva contraseña no cumple los requisitos:\n${validation.errors.join('\n')}`);
+        return;
+      }
+
+      if (profileForm.newPassword !== profileForm.confirmPassword) {
+        alert('❌ Las contraseñas no coinciden');
+        return;
+      }
+    }
+
+    if (!confirm('¿Estás seguro de actualizar tu perfil?')) return;
+
+    try {
+      await changeProfileMutation.mutateAsync();
+    } catch (error) {
+      // Error ya manejado en onError de la mutation
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -134,6 +302,22 @@ export default function PresidentDashboard() {
     setSelectedDebt(null);
   };
 
+  // Abrir modal de visualización de comprobante
+  const handleViewProof = (debt: Debt) => {
+    if (!debt.proof_file_url) {
+      alert('⚠️ Este comprobante no tiene archivo adjunto');
+      return;
+    }
+    setViewProofUrl(debt.proof_file_url);
+    setViewProofModalOpen(true);
+  };
+
+  // Cerrar modal de visualización
+  const handleCloseViewProof = () => {
+    setViewProofModalOpen(false);
+    setViewProofUrl(null);
+  };
+
   return (
     <>
       <Head>
@@ -159,6 +343,12 @@ export default function PresidentDashboard() {
                     {myChapter.name}
                   </p>
                 </div>
+                <button
+                  onClick={handleOpenProfileModal}
+                  className="px-4 py-2 bg-primary/20 text-primary hover:bg-primary/30 rounded-lg transition text-sm font-medium"
+                >
+                  ⚙️ Mi Perfil
+                </button>
                 <button
                   onClick={handleLogout}
                   className="btn-danger text-sm"
@@ -336,10 +526,40 @@ export default function PresidentDashboard() {
                             </button>
                           )}
                           {debt.status === 'in_review' && (
-                            <span className="text-blue-400 text-xs">En revisión...</span>
+                            <div className="flex items-center justify-end gap-2">
+                              <span className="text-blue-400 text-xs">En revisión...</span>
+                              {debt.proof_file_url && (
+                                <button
+                                  onClick={() => handleViewProof(debt)}
+                                  className="text-blue-400 hover:text-blue-300 transition-colors p-3 -m-3 min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
+                                  title="Ver comprobante"
+                                  aria-label="Ver comprobante subido"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
                           )}
                           {debt.status === 'approved' && (
-                            <span className="text-primary text-xs">✓ Pagado</span>
+                            <div className="flex items-center justify-end gap-2">
+                              <span className="text-primary text-xs">✓ Pagado</span>
+                              {debt.proof_file_url && (
+                                <button
+                                  onClick={() => handleViewProof(debt)}
+                                  className="text-primary hover:text-primary-light transition-colors p-3 -m-3 min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
+                                  title="Ver comprobante"
+                                  aria-label="Ver comprobante aprobado"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -374,6 +594,221 @@ export default function PresidentDashboard() {
           isOpen={uploadModalOpen}
           onClose={handleCloseModal}
         />
+      )}
+
+      {/* Modal de Visualización de Comprobante */}
+      <ViewProofModal
+        proofUrl={viewProofUrl}
+        isOpen={viewProofModalOpen}
+        onClose={handleCloseViewProof}
+      />
+
+      {/* Modal de Mi Perfil */}
+      {profileModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-dark border border-border-dark rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border-dark">
+              <h3 className="text-lg font-semibold text-text-primary">
+                ⚙️ Mi Perfil
+              </h3>
+              <button
+                onClick={handleCloseProfileModal}
+                className="text-text-secondary hover:text-text-primary"
+                disabled={changeProfileMutation.isLoading}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Mensaje de cambio forzoso */}
+            {/* @ts-ignore - must_change_password existe pero TypeScript no lo conoce aún */}
+            {profile?.must_change_password === true && (
+              <div className="mx-6 mt-6 p-4 bg-danger/10 border border-danger/30 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">🔐</span>
+                  <div>
+                    <p className="text-sm font-medium text-danger mb-1">
+                      Cambio de Contraseña Obligatorio
+                    </p>
+                    <p className="text-xs text-text-secondary">
+                      Por tu seguridad, debes cambiar tu contraseña antes de continuar.
+                      Esta es una medida de protección para tu cuenta.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contenido */}
+            <div className="p-6 space-y-6">
+              {/* Nombre Completo */}
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-2">
+                  Nombre Completo
+                </label>
+                <input
+                  type="text"
+                  value={profileForm.fullName}
+                  onChange={(e) =>
+                    setProfileForm((prev) => ({ ...prev, fullName: e.target.value }))
+                  }
+                  placeholder="Tu nombre completo"
+                  className="w-full px-4 py-2 bg-background-dark text-text-primary border border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  disabled={changeProfileMutation.isLoading}
+                />
+              </div>
+
+              {/* Separador */}
+              <div className="border-t border-border-dark"></div>
+
+              {/* Cambiar Contraseña (opcional) */}
+              <div>
+                <h4 className="text-sm font-medium text-text-primary mb-3">
+                  Cambiar Contraseña (opcional)
+                </h4>
+                <p className="text-xs text-text-secondary mb-4">
+                  Deja estos campos en blanco si no deseas cambiar tu contraseña
+                </p>
+
+                {/* Contraseña Actual */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Contraseña Actual
+                  </label>
+                  <input
+                    type="password"
+                    value={profileForm.currentPassword}
+                    onChange={(e) =>
+                      setProfileForm((prev) => ({ ...prev, currentPassword: e.target.value }))
+                    }
+                    placeholder="Tu contraseña actual"
+                    className="w-full px-4 py-2 bg-background-dark text-text-primary border border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={changeProfileMutation.isLoading}
+                  />
+                  <p className="mt-1 text-xs text-text-secondary">
+                    Solo si cambias tu contraseña
+                  </p>
+                </div>
+
+                {/* Nueva Contraseña */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Nueva Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    value={profileForm.newPassword}
+                    onChange={(e) =>
+                      setProfileForm((prev) => ({ ...prev, newPassword: e.target.value }))
+                    }
+                    placeholder="Nueva contraseña"
+                    className="w-full px-4 py-2 bg-background-dark text-text-primary border border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={changeProfileMutation.isLoading}
+                  />
+
+                  {/* Requisitos con checkmarks en tiempo real */}
+                  {profileForm.newPassword && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-medium text-text-secondary">Requisitos:</p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className={passwordChecks.minLength ? 'text-primary' : 'text-text-secondary'}>
+                            {passwordChecks.minLength ? '✅' : '❌'}
+                          </span>
+                          <span className={passwordChecks.minLength ? 'text-primary' : 'text-text-secondary'}>
+                            Mínimo 8 caracteres
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className={passwordChecks.hasUppercase ? 'text-primary' : 'text-text-secondary'}>
+                            {passwordChecks.hasUppercase ? '✅' : '❌'}
+                          </span>
+                          <span className={passwordChecks.hasUppercase ? 'text-primary' : 'text-text-secondary'}>
+                            Al menos 1 mayúscula (A-Z)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className={passwordChecks.hasLowercase ? 'text-primary' : 'text-text-secondary'}>
+                            {passwordChecks.hasLowercase ? '✅' : '❌'}
+                          </span>
+                          <span className={passwordChecks.hasLowercase ? 'text-primary' : 'text-text-secondary'}>
+                            Al menos 1 minúscula (a-z)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className={passwordChecks.hasSpecial ? 'text-primary' : 'text-text-secondary'}>
+                            {passwordChecks.hasSpecial ? '✅' : '❌'}
+                          </span>
+                          <span className={passwordChecks.hasSpecial ? 'text-primary' : 'text-text-secondary'}>
+                            Al menos 1 carácter especial (!@#$%^&*...)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirmar Nueva Contraseña */}
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Confirmar Nueva Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    value={profileForm.confirmPassword}
+                    onChange={(e) =>
+                      setProfileForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
+                    }
+                    placeholder="Confirma tu nueva contraseña"
+                    className="w-full px-4 py-2 bg-background-dark text-text-primary border border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={changeProfileMutation.isLoading}
+                  />
+                  {profileForm.newPassword && profileForm.confirmPassword && (
+                    <p className={`mt-1 text-xs ${
+                      profileForm.newPassword === profileForm.confirmPassword
+                        ? 'text-primary'
+                        : 'text-danger'
+                    }`}>
+                      {profileForm.newPassword === profileForm.confirmPassword
+                        ? '✅ Las contraseñas coinciden'
+                        : '❌ Las contraseñas no coinciden'
+                      }
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-border-dark">
+              <button
+                onClick={handleCloseProfileModal}
+                className="px-4 py-2 bg-surface-dark border border-border-dark text-text-primary rounded-lg hover:bg-gray-700 transition"
+                disabled={changeProfileMutation.isLoading}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSubmitProfile}
+                disabled={changeProfileMutation.isLoading}
+                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {changeProfileMutation.isLoading ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    <span>Guardando...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>💾</span>
+                    <span>Guardar Cambios</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

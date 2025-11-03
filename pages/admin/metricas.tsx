@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useDebts, useRequestStats, useChapterStats } from '@/hooks/useDebts';
 import { formatCurrency, formatDateTime } from '@/lib/utils/format';
 import { SkeletonLoader } from '@/components/SkeletonLoader';
+import ViewProofModal from '@/components/modals/ViewProofModal';
+import type { Debt } from '@/types/database.types';
 import {
   LineChart,
   Line,
@@ -39,6 +41,10 @@ export default function MetricasDashboard() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [expandedRequest, setExpandedRequest] = useState<string | null>(null);
   const [expandedChapter, setExpandedChapter] = useState<string | null>(null);
+
+  // Estado para modal de visualización de comprobante
+  const [viewProofModalOpen, setViewProofModalOpen] = useState(false);
+  const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
 
   // Queries para datos
   const { data: allDebts = [], isLoading: loadingDebts } = useDebts();
@@ -133,6 +139,22 @@ export default function MetricasDashboard() {
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
+  };
+
+  // Abrir modal de visualización de comprobante
+  const handleViewProof = (debt: Debt) => {
+    if (!debt.proof_file_url) {
+      alert('⚠️ Este comprobante no tiene archivo adjunto');
+      return;
+    }
+    setViewProofUrl(debt.proof_file_url);
+    setViewProofModalOpen(true);
+  };
+
+  // Cerrar modal de visualización
+  const handleCloseViewProof = () => {
+    setViewProofModalOpen(false);
+    setViewProofUrl(null);
   };
 
   // ====================================
@@ -370,21 +392,42 @@ export default function MetricasDashboard() {
                                 </td>
                                 <td className="py-3 px-4 text-sm font-medium text-primary">{formatCurrency(Number(debt.amount))}</td>
                                 <td className="py-3 px-4">
-                                  <span
-                                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                      debt.status === 'approved'
-                                        ? 'bg-primary-light/20 text-primary-light'
-                                        : debt.status === 'in_review'
-                                        ? 'bg-blue-500/20 text-blue-400'
-                                        : debt.status === 'overdue'
-                                        ? 'bg-danger/20 text-danger'
-                                        : 'bg-yellow-500/20 text-yellow-400'
-                                    }`}
-                                  >
-                                    {debt.status === 'approved' ? 'Aprobado' :
-                                     debt.status === 'in_review' ? 'En Revisión' :
-                                     debt.status === 'overdue' ? 'Vencido' : 'Pendiente'}
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                                        debt.status === 'approved'
+                                          ? 'bg-primary-light/20 text-primary-light'
+                                          : debt.status === 'in_review'
+                                          ? 'bg-blue-500/20 text-blue-400'
+                                          : debt.status === 'overdue'
+                                          ? 'bg-danger/20 text-danger'
+                                          : 'bg-yellow-500/20 text-yellow-400'
+                                      }`}
+                                    >
+                                      {debt.status === 'approved' ? 'Aprobado' :
+                                       debt.status === 'in_review' ? 'En Revisión' :
+                                       debt.status === 'overdue' ? 'Vencido' : 'Pendiente'}
+                                    </span>
+                                    {debt.proof_file_url && (
+                                      <button
+                                        onClick={() => handleViewProof(debt)}
+                                        className={`transition-colors p-3 -m-3 min-w-[44px] min-h-[44px] inline-flex items-center justify-center ${
+                                          debt.status === 'approved'
+                                            ? 'text-primary-light hover:text-primary'
+                                            : debt.status === 'in_review'
+                                            ? 'text-blue-400 hover:text-blue-300'
+                                            : 'text-text-secondary hover:text-text-primary'
+                                        }`}
+                                        title="Ver comprobante"
+                                        aria-label="Ver comprobante de pago"
+                                      >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                      </button>
+                                    )}
+                                  </div>
                                 </td>
                               </tr>
                             ))}
@@ -797,6 +840,13 @@ export default function MetricasDashboard() {
           </div>
         </main>
       </div>
+
+      {/* Modal de Visualización de Comprobante */}
+      <ViewProofModal
+        proofUrl={viewProofUrl}
+        isOpen={viewProofModalOpen}
+        onClose={handleCloseViewProof}
+      />
     </>
   );
 }

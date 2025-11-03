@@ -13,6 +13,11 @@ interface UploadProofParams {
   file: File;
   chapterId: string;
   debtId: string;
+  // Metadata opcional para nomenclatura descriptiva
+  metadata?: {
+    debtType?: string;
+    chapterName?: string;
+  };
 }
 
 interface UploadProofResult {
@@ -47,15 +52,15 @@ export function useUploadProof() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<UploadProofResult, Error, UploadProofParams>({
-    mutationFn: async ({ file, chapterId, debtId }) => {
+    mutationFn: async ({ file, chapterId, debtId, metadata }) => {
       // 1. Validar archivo
       const validation = validateFile(file);
       if (!validation.valid) {
         throw new StorageError(StorageErrorType.INVALID_TYPE, validation.error!);
       }
 
-      // 2. Generar path
-      const path = generateProofPath(chapterId, debtId, file.name);
+      // 2. Generar path con nomenclatura descriptiva (si hay metadata)
+      const path = generateProofPath(chapterId, debtId, file.name, metadata);
 
       // 3. Subir archivo a Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -153,7 +158,7 @@ export function useReplaceProof() {
     Error,
     UploadProofParams & { oldPath: string }
   >({
-    mutationFn: async ({ file, chapterId, debtId, oldPath }) => {
+    mutationFn: async ({ file, chapterId, debtId, oldPath, metadata }) => {
       // 1. Eliminar archivo anterior
       const { error: deleteError } = await supabase.storage
         .from(STORAGE_CONFIG.BUCKET_NAME)
@@ -164,8 +169,8 @@ export function useReplaceProof() {
         // Continuar con la subida aunque falle la eliminación
       }
 
-      // 2. Subir nuevo archivo
-      return uploadProof({ file, chapterId, debtId });
+      // 2. Subir nuevo archivo con metadata
+      return uploadProof({ file, chapterId, debtId, metadata });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['debts'] });

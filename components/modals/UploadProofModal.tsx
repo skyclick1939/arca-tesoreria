@@ -40,6 +40,11 @@ export default function UploadProofModal({
   const [validationError, setValidationError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Estado para sistema de copia confiable
+  const [copiedField, setCopiedField] = useState<'clabe' | 'cuenta' | null>(null);
+  const [showCopyToast, setShowCopyToast] = useState(false);
+  const [copyToastMessage, setCopyToastMessage] = useState('');
+
   // Hooks para upload y reemplazo
   const { uploadProof, isUploading: isUploadingInitial, error: uploadError } = useUploadProof();
   const { replaceProof, isReplacing, error: replaceError } = useReplaceProof();
@@ -126,13 +131,21 @@ export default function UploadProofModal({
           chapterId: debt.chapter_id,
           debtId: debt.id,
           oldPath: oldFilePath,
+          metadata: {
+            debtType: debt.debt_type,
+            chapterName: chapterName,
+          },
         });
       } else {
-        // Modo upload inicial
+        // Modo upload inicial con nomenclatura descriptiva
         await uploadProof({
           file: selectedFile,
           chapterId: debt.chapter_id,
           debtId: debt.id,
+          metadata: {
+            debtType: debt.debt_type,
+            chapterName: chapterName,
+          },
         });
       }
 
@@ -165,10 +178,52 @@ export default function UploadProofModal({
     }
   }, [debt.proof_file_url]);
 
+  /**
+   * Sistema de Copia Confiable
+   * Implementa Clipboard API con fallback + feedback multi-canal
+   */
+  const handleCopy = async (text: string, fieldType: 'clabe' | 'cuenta') => {
+    try {
+      // Intentar Clipboard API moderna
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback para navegadores antiguos o HTTP
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+      }
+
+      // Feedback multi-canal:
+      // 1. Cambio visual del botón (ícono check temporal)
+      setCopiedField(fieldType);
+      setTimeout(() => setCopiedField(null), 2000); // Reset después de 2s
+
+      // 2. Toast notification
+      const fieldName = fieldType === 'clabe' ? 'CLABE' : 'Cuenta';
+      setCopyToastMessage(`${fieldName} copiada al portapapeles`);
+      setShowCopyToast(true);
+      setTimeout(() => setShowCopyToast(false), 3000); // Ocultar después de 3s
+
+    } catch (error) {
+      console.error('[handleCopy] Error al copiar:', error);
+      setValidationError('Error al copiar al portapapeles');
+    }
+  };
+
   // Cerrar modal y limpiar estado
   const handleClose = () => {
     setSelectedFile(null);
     setValidationError(null);
+    setCopiedField(null);
+    setShowCopyToast(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -239,21 +294,80 @@ export default function UploadProofModal({
                 {/* Datos Bancarios */}
                 <div className="pt-3 border-t border-border-dark">
                   <span className="text-text-secondary block mb-2">Depositar a:</span>
-                  <div className="bg-surface-dark/50 rounded p-3 space-y-1">
+                  <div className="bg-surface-dark/50 rounded p-3 space-y-2">
                     <p className="text-text-primary">
                       <span className="text-text-secondary">Banco:</span> {debt.bank_name}
                     </p>
+
+                    {/* CLABE con botón copiar */}
                     {debt.bank_clabe && (
-                      <p className="text-text-primary">
-                        <span className="text-text-secondary">CLABE:</span> {debt.bank_clabe}
-                      </p>
+                      <div className="flex items-center justify-between gap-2 bg-background-dark/30 rounded px-2 py-1.5">
+                        <div className="flex-1">
+                          <span className="text-text-secondary text-xs">CLABE:</span>
+                          <p className="text-text-primary font-mono text-sm font-medium">
+                            {debt.bank_clabe}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(debt.bank_clabe!, 'clabe')}
+                          className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 hover:bg-primary/20 transition-colors"
+                          title="Copiar CLABE al portapapeles"
+                        >
+                          {copiedField === 'clabe' ? (
+                            <>
+                              <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-primary font-medium">Copiado</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              <span>Copiar</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     )}
+
+                    {/* Cuenta con botón copiar */}
                     {debt.bank_account && (
-                      <p className="text-text-primary">
-                        <span className="text-text-secondary">Cuenta:</span> {debt.bank_account}
-                      </p>
+                      <div className="flex items-center justify-between gap-2 bg-background-dark/30 rounded px-2 py-1.5">
+                        <div className="flex-1">
+                          <span className="text-text-secondary text-xs">Cuenta:</span>
+                          <p className="text-text-primary font-mono text-sm font-medium">
+                            {debt.bank_account}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(debt.bank_account!, 'cuenta')}
+                          className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 hover:bg-primary/20 transition-colors"
+                          title="Copiar Cuenta al portapapeles"
+                        >
+                          {copiedField === 'cuenta' ? (
+                            <>
+                              <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-primary font-medium">Copiado</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              <span>Copiar</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     )}
-                    <p className="text-text-primary">
+
+                    <p className="text-text-primary pt-1">
                       <span className="text-text-secondary">Titular:</span> {debt.bank_holder}
                     </p>
                   </div>
@@ -404,7 +518,7 @@ export default function UploadProofModal({
         </div>
       </div>
 
-      {/* Toast de éxito */}
+      {/* Toast de éxito (upload/replace) */}
       {showToast && (
         <div className="fixed bottom-4 right-4 z-[60] animate-fade-in">
           <div className="card bg-primary border-primary shadow-2xl">
@@ -419,6 +533,29 @@ export default function UploadProofModal({
                 </p>
                 <p className="text-text-secondary text-sm">
                   Tu pago está en revisión
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast de copia exitosa */}
+      {showCopyToast && (
+        <div className="fixed bottom-4 right-4 z-[60] animate-fade-in">
+          <div className="card bg-primary/90 backdrop-blur-sm border-primary shadow-2xl">
+            <div className="flex items-center gap-3">
+              <div className="text-primary text-2xl">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-text-primary font-medium">
+                  {copyToastMessage}
+                </p>
+                <p className="text-text-secondary text-sm">
+                  Listo para pegar
                 </p>
               </div>
             </div>
