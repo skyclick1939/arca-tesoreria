@@ -236,6 +236,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   /**
+   * Refrescar perfil del usuario actual
+   *
+   * Útil para actualizar el nombre u otros datos del perfil sin recargar la página.
+   * Se usa después de cambiar datos de perfil en modales.
+   *
+   * Flujo:
+   * 1. Verificar que haya usuario autenticado
+   * 2. Re-fetch del perfil desde Supabase
+   * 3. Actualizar estado global
+   *
+   * NO recarga la página - solo actualiza el estado del contexto.
+   */
+  const refreshProfile = async (): Promise<void> => {
+    if (!user) {
+      console.warn('[AuthProvider] No se puede refrescar perfil: no hay usuario autenticado');
+      return;
+    }
+
+    try {
+      console.log('[AuthProvider] Refrescando perfil del usuario...');
+      const updatedProfile = await fetchProfile(user.id);
+
+      if (updatedProfile) {
+        setProfile(updatedProfile);
+        console.log('[AuthProvider] Perfil actualizado:', updatedProfile.full_name);
+      } else {
+        console.warn('[AuthProvider] No se pudo obtener el perfil actualizado');
+      }
+    } catch (error) {
+      console.error('[AuthProvider] Error al refrescar perfil:', error);
+      throw error;
+    }
+  };
+
+  /**
    * Redirige al usuario según su rol
    *
    * FIX: Reemplazado window.location.assign() por router.push()
@@ -264,6 +299,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isPresident: profile?.role === 'president',
     login,
     logout,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

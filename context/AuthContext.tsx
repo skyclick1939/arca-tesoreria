@@ -25,6 +25,7 @@ export interface AuthContextType {
   // Funciones de autenticación
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 /**
@@ -49,6 +50,9 @@ export const AuthContext = createContext<AuthContextType>({
     throw new Error('AuthProvider no está montado. Envuelve la app con <AuthProvider>.');
   },
   logout: async () => {
+    throw new Error('AuthProvider no está montado. Envuelve la app con <AuthProvider>.');
+  },
+  refreshProfile: async () => {
     throw new Error('AuthProvider no está montado. Envuelve la app con <AuthProvider>.');
   },
 });

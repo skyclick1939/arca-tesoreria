@@ -28,7 +28,7 @@ import { validatePasswordStrength, type PasswordStrengthCheck } from '@/lib/vali
 type FilterStatus = DebtStatus | 'all';
 
 export default function PresidentDashboard() {
-  const { profile, session, isAuthenticated, isPresident, isLoading, logout } = useAuth();
+  const { profile, session, isAuthenticated, isPresident, isLoading, logout, refreshProfile } = useAuth();
   const { data: myChapter, isLoading: loadingChapter } = useMyChapter();
 
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
@@ -122,7 +122,7 @@ export default function PresidentDashboard() {
 
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       alert('✅ Perfil actualizado exitosamente');
       setProfileModalOpen(false);
       setProfileForm({
@@ -131,8 +131,8 @@ export default function PresidentDashboard() {
         newPassword: '',
         confirmPassword: '',
       });
-      // Recargar para actualizar nombre en header
-      window.location.reload();
+      // Refrescar perfil SIN recargar la página (actualiza nombre en header)
+      await refreshProfile();
     },
     onError: (error: Error) => {
       alert(`❌ Error: ${error.message}`);
