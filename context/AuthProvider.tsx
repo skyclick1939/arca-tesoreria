@@ -1,5 +1,6 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 import type { UserProfile, UserRole } from '@/types/database.types';
@@ -33,6 +34,7 @@ interface AuthProviderProps {
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // Estados principales
   const [user, setUser] = useState<User | null>(null);
@@ -202,11 +204,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
    *
    * Flujo:
    * 1. Llamar a Supabase signOut()
-   * 2. Limpiar estados globales
-   * 3. Redirigir a /login
+   * 2. Limpiar estados globales de AuthProvider
+   * 3. CRÍTICO: Limpiar cache de React Query (seguridad + prevenir bugs)
+   * 4. Redirigir a /login
    *
-   * Nota: El listener onAuthStateChange también limpiará los estados,
-   * pero lo hacemos aquí para feedback inmediato.
+   * Nota sobre queryClient.clear():
+   * - Elimina TODA la data cacheada (deudas, capítulos, comprobantes)
+   * - Garantiza 0% de data sensible persistente entre usuarios
+   * - Previene bugs de cache corrupto al hacer logout→login con otro usuario
+   * - Ver issue: Loading infinito después de logout/login
    */
   const logout = async (): Promise<void> => {
     setIsLoading(true);
@@ -220,10 +226,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       console.log('[AuthProvider] Logout exitoso');
 
-      // Limpiar estados
+      // Limpiar estados del AuthProvider
       setUser(null);
       setProfile(null);
       setSession(null);
+
+      // CRÍTICO: Limpiar cache de React Query
+      // Esto previene que queries del usuario anterior persistan en memoria
+      queryClient.clear();
+      console.log('[AuthProvider] Cache de React Query limpiado');
 
       // Redirigir a login
       router.push('/login');
